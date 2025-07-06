@@ -1,0 +1,39 @@
+# Python
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+*.swp
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Entornos virtuales
+.venv/
+env/
+ENV/
+venv/
+pip-selfcheck.json
+
+# Streamlit cache
+.streamlit/cache/
+.streamlit/config.toml
+.streamlit/secrets.toml
+
+# Modelos entrenados
+# *.joblib
+*.pkl
+
+# Archivos temporales
+.DS_Store
+*.log
+*.tmp
+
+# Datos sensibles o temporales
+*.csv
+*.json
+*.xlsx
+
+# VS Code / PyCharm settings (opcional)
+.vscode/
+.idea/
