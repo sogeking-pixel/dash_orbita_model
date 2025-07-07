@@ -30,7 +30,7 @@ def cargar_modelos():
     return modelos
 
 modelos = cargar_modelos()
-periodos = 12
+periodos = 6
 
 # DataFrame para todas las predicciones
 df_predicciones = []
