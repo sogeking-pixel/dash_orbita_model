@@ -30,7 +30,7 @@ def cargar_modelos():
     return modelos
 
 modelos = cargar_modelos()
-periodos = 6
+periodos = 12
 
 # DataFrame para todas las predicciones
 df_predicciones = []
@@ -101,15 +101,15 @@ if modelo:
     future = modelo.make_future_dataframe(periods=periodos, freq="ME")
     forecast = modelo.predict(future)
 
-    # Métricas
-    mae, rmse, mape, r2 = calcular_metricas(modelo)
-    st.markdown(f"""
-    ### 📦 {cat_seleccionada} — Métricas de precisión
-    - **MAE:** {mae:.2f}
-    - **RMSE:** {rmse:.2f}
-    - **MAPE:** {mape * 100:.2f}%
-    - **R²:** {r2:.2f}
-    """)
+    # # Métricas
+    # mae, rmse, mape, r2 = calcular_metricas(modelo)
+    # st.markdown(f"""
+    # ### 📦 {cat_seleccionada} — Métricas de precisión
+    # - **MAE:** {mae:.2f}
+    # - **RMSE:** {rmse:.2f}
+    # - **MAPE:** {mape * 100:.2f}%
+    # - **R²:** {r2:.2f}
+    # """)
 
     # Gráfico completo
     fig = grafico_historico_prediccion(df_real, forecast, cat_seleccionada)
