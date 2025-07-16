@@ -286,6 +286,60 @@ if mostrar_componentes:
         if 'holidays' in forecast:
             cols[2].plotly_chart(fig_eventos, use_container_width=True)
 
+st.subheader("🧪 Validación del Modelo con Datos Reales")
+
+# Ingreso de datos reales para validar predicciones
+st.markdown(f"Ingrese las compras reales de los próximos {periodos} meses:")
+
+# Lista de inputs
+compras_reales = []
+for i in range(periodos):
+    valor = st.number_input(f"Mes {i+1}", min_value=0.0, step=1.0, key=f"real_val_{i}")
+    compras_reales.append(valor)
+
+# Procesar si hay datos ingresados
+df_val = df_pred[df_pred["categoria"] == cat_seleccionada].copy().reset_index(drop=True)
+df_val = df_val.tail(periodos)
+
+if len(compras_reales) == len(df_val):
+    df_val["real"] = compras_reales
+    df_val["error_abs"] = abs(df_val["real"] - df_val["yhat_smooth"])
+    df_val["error_pct"] = 100 * df_val["error_abs"] / df_val["real"].replace(0, np.nan)
+
+    # Calcular métricas
+    from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+
+    mae = mean_absolute_error(df_val["real"], df_val["yhat_smooth"])
+    rmse = mean_squared_error(df_val["real"], df_val["yhat_smooth"])
+    r2 = r2_score(df_val["real"], df_val["yhat_smooth"])
+    mape = np.mean(df_val["error_pct"].dropna())
+
+    # Mostrar métricas
+    st.markdown("### 📊 Métricas de Evaluación")
+    st.write(f"**MAE (Error Absoluto Medio):** {mae:.2f}")
+    st.write(f"**RMSE (Raíz del Error Cuadrático Medio):** {rmse:.2f}")
+    st.write(f"**R² (Coeficiente de determinación):** {r2:.2f}")
+    st.write(f"**MAPE (Error Porcentual Absoluto Medio):** {mape:.2f}%")
+
+    # Comparación visual
+    fig_cmp = go.Figure()
+    fig_cmp.add_trace(go.Scatter(x=df_val["ds"], y=df_val["real"], mode="lines+markers", name="Real"))
+    fig_cmp.add_trace(go.Scatter(x=df_val["ds"], y=df_val["yhat_smooth"], mode="lines+markers", name="Predicción"))
+    fig_cmp.update_layout(title="Comparación: Predicción vs Real", xaxis_title="Fecha", yaxis_title="Compras")
+    st.plotly_chart(fig_cmp, use_container_width=True)
+
+    # Mostrar tabla
+    st.markdown("### 📄 Detalle por mes")
+    st.dataframe(df_val[["ds", "real", "yhat_smooth", "error_abs", "error_pct"]].rename(columns={
+        "ds": "Fecha",
+        "yhat_smooth": "Predicción",
+        "real": "Real",
+        "error_abs": "Error Absoluto",
+        "error_pct": "Error %"
+    }).round(2), use_container_width=True)
+
+
+
 # ===== TABLA RESUMEN Y DESCARGA =====
 st.subheader("📄 Tabla resumen de predicción")
 
